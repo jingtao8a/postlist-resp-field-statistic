@@ -3,9 +3,8 @@ package main
 import (
 	"bufio"
 	com_ss_ugc_tiktok "code.byted.org/tiktok/pb_builder/proto_gen"
-	"encoding/binary"
-	"github.com/gogo/protobuf/proto"
-	"io"
+	"encoding/json"
+	"fmt"
 	"os"
 )
 
@@ -13,40 +12,49 @@ func ReadMessagesFromFile(filePath string) ([]*com_ss_ugc_tiktok.AwemeV1AwemePos
 	// 打开文件
 	file, err := os.Open(filePath)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("无法打开文件: %w", err)
 	}
 	defer file.Close()
 
-	// 创建带缓冲的读取器
 	reader := bufio.NewReader(file)
-
 	var responses []*com_ss_ugc_tiktok.AwemeV1AwemePostResponse
+	var lineBuilder []byte
+	var strs []string
 
 	for {
-		// 读取长度前缀
-		var length uint64
-		if err := binary.Read(reader, binary.BigEndian, &length); err != nil {
-			if err == io.EOF {
-				// 文件结束，正常退出
-				break
-			}
-			return nil, err
-		}
-
-		// 读取消息数据
-		data := make([]byte, length)
-		if _, err := io.ReadFull(reader, data); err != nil {
-			return nil, err
-		}
-		response := &com_ss_ugc_tiktok.AwemeV1AwemePostResponse{}
-		// 反序列化消息
-		err := proto.Unmarshal(data, response)
+		// 读取一行（可能是不完整的，需要拼接）
+		line, isPrefix, err := reader.ReadLine()
 		if err != nil {
-			return nil, err
+			break
 		}
 
-		responses = append(responses, response)
+		// 拼接行（处理超长行）
+		lineBuilder = append(lineBuilder, line...)
+
+		// 如果不是前缀，表示一行完整读取完毕
+		if !isPrefix {
+			// 尝试解析JSON
+			response := &com_ss_ugc_tiktok.AwemeV1AwemePostResponse{}
+			if err := json.Unmarshal(lineBuilder, response); err != nil {
+				return nil, fmt.Errorf("解析JSON失败: %w, 行内容: %s", err, string(lineBuilder))
+			}
+			responses = append(responses, response)
+			strs = append(strs, string(lineBuilder))
+			lineBuilder = nil // 重置缓冲区
+		}
 	}
 
+	// 检查是否有未处理的最后一行
+	if len(lineBuilder) > 0 {
+		response := &com_ss_ugc_tiktok.AwemeV1AwemePostResponse{}
+		if err := json.Unmarshal(lineBuilder, response); err != nil {
+			return nil, fmt.Errorf("解析最后一行JSON失败: %w, 行内容: %s", err, string(lineBuilder))
+		}
+		responses = append(responses, response)
+		strs = append(strs, string(lineBuilder))
+	}
+	//for _, str := range strs {
+	//	fmt.Println(str)
+	//}
 	return responses, nil
 }
