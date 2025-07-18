@@ -38,6 +38,7 @@ func ReadMessagesFromFile(filePath string) ([]*com_ss_ugc_tiktok.AwemeV1AwemePos
 			if err := json.Unmarshal(lineBuilder, response); err != nil {
 				return nil, fmt.Errorf("解析JSON失败: %w, 行内容: %s", err, string(lineBuilder))
 			}
+			EnsureNestedMessages(response)
 			responses = append(responses, response)
 			strs = append(strs, string(lineBuilder))
 			lineBuilder = nil // 重置缓冲区
@@ -50,11 +51,14 @@ func ReadMessagesFromFile(filePath string) ([]*com_ss_ugc_tiktok.AwemeV1AwemePos
 		if err := json.Unmarshal(lineBuilder, response); err != nil {
 			return nil, fmt.Errorf("解析最后一行JSON失败: %w, 行内容: %s", err, string(lineBuilder))
 		}
+		EnsureNestedMessages(response)
 		responses = append(responses, response)
 		strs = append(strs, string(lineBuilder))
 	}
-	//for _, str := range strs {
-	//	fmt.Println(str)
-	//}
+	for _, str := range strs {
+		fmt.Println(str)
+	}
+	//fmt.Println(strs[len(strs)-1])
+	//fmt.Print("\n\n\n\n")
 	return responses, nil
 }

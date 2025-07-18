@@ -6,6 +6,7 @@ import (
 	"github.com/gogo/protobuf/proto"
 	"github.com/klauspost/compress/zstd"
 	"log"
+	"runtime/debug"
 )
 
 // compress 使用Zstd压缩数据
@@ -22,6 +23,13 @@ func compress(data []byte) ([]byte, error) {
 }
 
 func performExperiment() {
+	defer func() {
+		if r := recover(); r != nil {
+			// 打印 panic 信息和堆栈跟踪
+			fmt.Printf("捕获到 panic: %v\n", r)
+			log.Printf("堆栈跟踪: %s", string(debug.Stack()))
+		}
+	}()
 	responses, err := ReadMessagesFromFile(RESPONSE_PATH)
 	if err != nil {
 		log.Fatal(err)
@@ -43,6 +51,7 @@ func performExperiment() {
 
 		v0Size += float64(len(bytes)) / float64(totalResponseCount)
 		v1Size += float64(len(v1Bytes)) / float64(totalResponseCount)
+		fmt.Println("success")
 	}
 
 	fmt.Printf("idc: %s\n", IDC_NAME)

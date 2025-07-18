@@ -9,11 +9,21 @@ import (
 )
 
 func TestJsonSerialization(t *testing.T) {
-	data := map[string]interface{}{
-		"name":    "Bob",
-		"age":     25,
-		"hobbies": []string{"swimming", "hiking"},
-		"active":  true,
+	type NestedStruct struct {
+		A *string
+		B *string
+	}
+	type Data struct {
+		Name   *string
+		Age    *int
+		Nested *NestedStruct
+	}
+	str := "yuxintao"
+	age := 12
+	data := &Data{
+		Name:   &str,
+		Age:    &age,
+		Nested: &NestedStruct{},
 	}
 	// 序列化为JSON
 	jsonData, err := json.Marshal(data)
