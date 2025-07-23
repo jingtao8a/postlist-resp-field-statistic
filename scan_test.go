@@ -7,111 +7,91 @@ import (
 	"testing"
 )
 
-// 扫描结果
-type ScanResult struct {
-	FieldPath string       // 字段路径（如 "User.Info.Metadata"）
-	FieldType reflect.Type // 字段类型
-	Value     interface{}  // 字段值
+func TestScan(t *testing.T) {
+	processed := make(map[reflect.Type]bool)
+	scanStruct(&com_ss_ugc_tiktok.AwemeV1AwemePostResponse{}, "", processed)
 }
 
-// ScanInterfaceFields 递归扫描结构体，找出所有 interface{} 类型的字段
-func ScanInterfaceFields(obj interface{}) []ScanResult {
-	var results []ScanResult
-	scanValue(reflect.ValueOf(obj), "", &results)
-	return results
-}
+// 扫描结构体，添加processed参数跟踪已处理类型
+func scanStruct(s interface{}, parentPath string, processed map[reflect.Type]bool) {
+	t := reflect.TypeOf(s)
 
-// 递归扫描值
-func scanValue(v reflect.Value, path string, results *[]ScanResult) {
-	// 处理指针
-	if v.Kind() == reflect.Ptr {
-		if v.IsNil() {
-			return
+	// 解析指针类型
+	for t.Kind() == reflect.Ptr {
+		t = t.Elem()
+		if parentPath != "" {
+			parentPath += "*"
 		}
-		scanValue(v.Elem(), path, results)
-		return
 	}
 
-	// 处理接口
-	if v.Kind() == reflect.Interface {
-		if v.IsNil() {
-			return
-		}
-		scanValue(v.Elem(), path, results)
+	// 检查是否已处理过该类型（避免循环引用）
+	if processed[t] {
 		return
 	}
+	processed[t] = true // 标记为已处理
 
-	// 处理结构体
-	if v.Kind() == reflect.Struct {
-		t := v.Type()
-		for i := 0; i < v.NumField(); i++ {
-			field := v.Field(i)
-			fieldType := t.Field(i)
+	if t.Kind() == reflect.Struct {
+		for i := 0; i < t.NumField(); i++ {
+			field := t.Field(i)
+			fieldType := field.Type
+			currentPath := getCurrentPath(parentPath, t.Name(), field.Name)
 
-			// 构建完整路径
-			fieldPath := fieldType.Name
-			if path != "" {
-				fieldPath = path + "." + fieldPath
-			}
-
-			// 如果字段是匿名字段（嵌入结构体），不添加字段名
-			if fieldType.Anonymous {
-				scanValue(field, path, results)
+			if isMapStringInterfaceV2(fieldType) {
+				printFieldInfo(field, fieldType, currentPath)
 			} else {
-				// 检查字段类型是否为 interface{}
-				if fieldType.Type.Kind() == reflect.Interface &&
-					fieldType.Type.String() == "interface {}" {
-					*results = append(*results, ScanResult{
-						FieldPath: fieldPath,
-						FieldType: fieldType.Type,
-						Value:     field.Interface(),
-					})
-				}
-
-				// 递归扫描嵌套字段
-				scanValue(field, fieldPath, results)
+				processNestedType(fieldType, currentPath, processed)
 			}
 		}
-		return
-	}
-
-	// 处理切片和数组
-	if v.Kind() == reflect.Slice || v.Kind() == reflect.Array {
-		for i := 0; i < v.Len(); i++ {
-			// 构建路径（如 "Items[0]"）
-			itemPath := fmt.Sprintf("%s[%d]", path, i)
-			scanValue(v.Index(i), itemPath, results)
-		}
-		return
-	}
-
-	// 处理映射
-	if v.Kind() == reflect.Map {
-		for _, key := range v.MapKeys() {
-			// 构建路径（如 "Data[key]"）
-			keyStr := fmt.Sprintf("%v", key.Interface())
-			itemPath := fmt.Sprintf("%s[%s]", path, keyStr)
-			scanValue(v.MapIndex(key), itemPath, results)
-		}
-		return
+	} else if t.Kind() == reflect.Slice || t.Kind() == reflect.Array {
+		processNestedType(t, parentPath, processed)
 	}
 }
 
-// 示例使用
-func TestScanInterfaceField(t *testing.T) {
-	// 扫描 interface{} 字段
-	results := ScanInterfaceFields(&com_ss_ugc_tiktok.AwemeV1AwemePostResponse{})
+// 处理嵌套类型，传递processed参数
+func processNestedType(fieldType reflect.Type, currentPath string, processed map[reflect.Type]bool) {
+	if fieldType.Kind() == reflect.Ptr {
+		elemType := fieldType.Elem()
+		if elemType.Kind() == reflect.Struct {
+			scanStruct(reflect.New(elemType).Interface(), currentPath+"*", processed)
+		} else if elemType.Kind() == reflect.Ptr {
+			processNestedType(elemType, currentPath+"*", processed)
+		}
+	} else if fieldType.Kind() == reflect.Struct {
+		scanStruct(reflect.New(fieldType).Interface(), currentPath, processed)
+	} else if fieldType.Kind() == reflect.Slice || fieldType.Kind() == reflect.Array {
+		elemType := fieldType.Elem()
+		slicePath := currentPath + "[]"
 
-	// 输出结果
-	if len(results) == 0 {
-		fmt.Println("未发现 interface{} 类型的字段")
-	} else {
-		fmt.Println("发现以下 interface{} 类型的字段：")
-		for _, r := range results {
-			fmt.Printf("- 路径: %s\n", r.FieldPath)
-			fmt.Printf("  类型: %s\n", r.FieldType)
-			fmt.Printf("  值: %v\n", r.Value)
-			fmt.Println()
+		if elemType.Kind() == reflect.Struct {
+			scanStruct(reflect.New(elemType).Interface(), slicePath, processed)
+		} else if elemType.Kind() == reflect.Ptr {
+			ptrElemType := elemType.Elem()
+			if ptrElemType.Kind() == reflect.Struct {
+				scanStruct(reflect.New(ptrElemType).Interface(), slicePath+"*", processed)
+			}
 		}
 	}
+}
+
+// 工具函数（与之前相同）
+func getCurrentPath(parentPath, structName, fieldName string) string {
+	if parentPath == "" {
+		return structName + "." + fieldName
+	}
+	return parentPath + "." + fieldName
+}
+
+func isMapStringInterfaceV2(t reflect.Type) bool {
+	if t.Kind() != reflect.Map {
+		return false
+	}
+	return t.Key().Kind() == reflect.String && t.Elem().Kind() == reflect.Interface
+}
+
+func printFieldInfo(field reflect.StructField, fieldType reflect.Type, currentPath string) {
+	fmt.Printf("发现map[string]interface{}类型字段:\n")
+	fmt.Printf("  字段名: %s\n", field.Name)
+	fmt.Printf("  类型: %s\n", fieldType.String())
+	fmt.Printf("  完整路径: %s\n", currentPath)
+	fmt.Println("---")
 }

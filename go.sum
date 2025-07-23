@@ -1,7 +1,13 @@
 code.byted.org/tiktok/api_extend v0.0.0-20230831123722-3a2d9280bf90 h1:5tJndRGmpxTWpU4u2piCCT7hNsh4a1dHgCIIdVS0J/E=
 code.byted.org/tiktok/api_extend v0.0.0-20230831123722-3a2d9280bf90/go.mod h1:rQ1Dv7i7BtHzULDDLGHZ6lFyEGGQ8LYe8cigAas6PR8=
-code.byted.org/tiktok/pb_builder v1.0.52 h1:6P2eeN9TZ2/OCvQ71MGILX0+IyYO6oW09mHsc68hUyo=
-code.byted.org/tiktok/pb_builder v1.0.52/go.mod h1:0wQ/VxAubK3XcIozTPeJjFh2sJHs9sZ48bO1LVk2OzM=
+code.byted.org/tiktok/pb_builder v1.0.53-0.20250722084406-e8df06592aa7 h1:Uu5DZAdlkxvfBjepIQl+xq3P4ofVm8UnQhflA6mkJEo=
+code.byted.org/tiktok/pb_builder v1.0.53-0.20250722084406-e8df06592aa7/go.mod h1:NBEFe3V4v/NoTv/I2iSCOzZ7CVJwTL54PpI7iVkbWFU=
+code.byted.org/tiktok/pb_builder v1.0.53-0.20250723033405-33207b7233ba h1:m2WAamAWHCCp+MPXzefDncpxegrjMctQtj4/fznxIVU=
+code.byted.org/tiktok/pb_builder v1.0.53-0.20250723033405-33207b7233ba/go.mod h1:NBEFe3V4v/NoTv/I2iSCOzZ7CVJwTL54PpI7iVkbWFU=
+code.byted.org/tiktok/pb_builder v1.0.53-0.20250723070018-8a1afebfe549 h1:BKmNHn9VfUdE5xqh7nMyIdbywsii5L6hvt/JEU0DOys=
+code.byted.org/tiktok/pb_builder v1.0.53-0.20250723070018-8a1afebfe549/go.mod h1:NBEFe3V4v/NoTv/I2iSCOzZ7CVJwTL54PpI7iVkbWFU=
+code.byted.org/tiktok/pb_builder v1.0.53-0.20250723080048-44948e686dcf h1:4nkXrEqh4UzvPt8u6SMMXpX3kLAOzFxyo63B8sMRIdA=
+code.byted.org/tiktok/pb_builder v1.0.53-0.20250723080048-44948e686dcf/go.mod h1:NBEFe3V4v/NoTv/I2iSCOzZ7CVJwTL54PpI7iVkbWFU=
 github.com/gogo/protobuf v1.3.2 h1:Ov1cvc58UF3b5XjBnZv7+opcTcQFZebYjWzi34vdm4Q=
 github.com/gogo/protobuf v1.3.2/go.mod h1:P1XiOD3dCwIKUDQYPy72D8LYyHL2YPYrpS2s69NZV8Q=
 github.com/golang/protobuf v1.5.0/go.mod h1:FsONVRAS9T7sI+LIUmWTfcYkHO4aIWwzhcaSAoJOfIk=

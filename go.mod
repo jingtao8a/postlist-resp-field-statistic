@@ -3,7 +3,7 @@ module postlist-resp-field-statistic
 go 1.23.8
 
 require (
-	code.byted.org/tiktok/pb_builder v1.0.52
+	code.byted.org/tiktok/pb_builder v1.0.53-0.20250723080048-44948e686dcf
 	github.com/gogo/protobuf v1.3.2
 	github.com/klauspost/compress v1.16.5
 )

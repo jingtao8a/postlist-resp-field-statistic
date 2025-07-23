@@ -55,10 +55,5 @@ func ReadMessagesFromFile(filePath string) ([]*com_ss_ugc_tiktok.AwemeV1AwemePos
 		responses = append(responses, response)
 		strs = append(strs, string(lineBuilder))
 	}
-	for _, str := range strs {
-		fmt.Println(str)
-	}
-	//fmt.Println(strs[len(strs)-1])
-	//fmt.Print("\n\n\n\n")
 	return responses, nil
 }
