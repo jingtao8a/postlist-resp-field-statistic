@@ -47,7 +47,7 @@ func performExperiment(responses []*com_ss_ugc_tiktok.AwemeV1AwemePostResponse) 
 	fmt.Printf("平均减少%fKB，降低%f%%\n", (v0Size-v1Size)/float64(KB), (v0Size-v1Size)/v0Size*100)
 }
 
-func main() {
+func perform() {
 	responses, err := ReadMessagesFromFile(RESPONSE_PATH)
 	if err != nil {
 		log.Fatal(err)
@@ -58,7 +58,7 @@ func main() {
 	var totalResponseCount = len(responses)
 	fmt.Printf("get %d responses int total\n", totalResponseCount)
 	fmt.Printf("=================================\n")
-	fmt.Printf("total response count: %d\n", totalResponseCount)
+	fmt.Printf("total response\n")
 	performExperiment(responses)
 	// 分类<20k、[20k, 40k)、[40k, 60k), >=60k
 	var type1Responses []*com_ss_ugc_tiktok.AwemeV1AwemePostResponse
@@ -92,4 +92,22 @@ func main() {
 	fmt.Printf("==================================\n")
 	fmt.Printf(">=60k\n")
 	performExperiment(type4Responses)
+}
+
+func testField() {
+	responses, err := ReadMessagesFromFile(RESPONSE_PATH)
+	if err != nil {
+		log.Fatal(err)
+	}
+	if responses == nil {
+		log.Fatal("responses is nil")
+	}
+	var totalResponseCount = len(responses)
+	fmt.Printf("get %d responses int total\n", totalResponseCount)
+	fmt.Printf("=================================\n")
+
+}
+
+func main() {
+	perform()
 }
