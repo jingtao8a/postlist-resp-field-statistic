@@ -19,7 +19,6 @@ func ReadMessagesFromFile(filePath string) ([]*com_ss_ugc_tiktok.AwemeV1AwemePos
 	reader := bufio.NewReader(file)
 	var responses []*com_ss_ugc_tiktok.AwemeV1AwemePostResponse
 	var lineBuilder []byte
-	var strs []string
 
 	for {
 		// 读取一行（可能是不完整的，需要拼接）
@@ -38,9 +37,8 @@ func ReadMessagesFromFile(filePath string) ([]*com_ss_ugc_tiktok.AwemeV1AwemePos
 			if err := json.Unmarshal(lineBuilder, response); err != nil {
 				return nil, fmt.Errorf("解析JSON失败: %w, 行内容: %s", err, string(lineBuilder))
 			}
-			EnsureNestedMessages(response)
+			//EnsureNestedMessages(response)
 			responses = append(responses, response)
-			strs = append(strs, string(lineBuilder))
 			lineBuilder = nil // 重置缓冲区
 		}
 	}
@@ -51,9 +49,8 @@ func ReadMessagesFromFile(filePath string) ([]*com_ss_ugc_tiktok.AwemeV1AwemePos
 		if err := json.Unmarshal(lineBuilder, response); err != nil {
 			return nil, fmt.Errorf("解析最后一行JSON失败: %w, 行内容: %s", err, string(lineBuilder))
 		}
-		EnsureNestedMessages(response)
+		//EnsureNestedMessages(response)
 		responses = append(responses, response)
-		strs = append(strs, string(lineBuilder))
 	}
 	return responses, nil
 }
