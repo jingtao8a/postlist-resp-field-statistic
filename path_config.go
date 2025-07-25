@@ -1,5 +1,5 @@
 package main
 
-const RESPONSE_PATH = "/Users/bytedance/postlist-resp-field-statistic/responsedir-sg1/response.txt"
+const RESPONSE_PATH = "/Users/bytedance/postlist-resp-field-statistic/responsedir-va/response.txt"
 
-const IDC_NAME = "sg1"
+const IDC_NAME = "va"
