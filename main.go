@@ -7,6 +7,8 @@ import (
 	"github.com/gogo/protobuf/proto"
 	"github.com/klauspost/compress/zstd"
 	"log"
+	"postlist-resp-field-statistic/common"
+	"postlist-resp-field-statistic/config"
 )
 
 const KB = 1024
@@ -41,14 +43,14 @@ func performExperiment(responses []*com_ss_ugc_tiktok.AwemeV1AwemePostResponse) 
 		v1Size += float64(len(v1Bytes)) / float64(responsesLen)
 	}
 
-	fmt.Printf("idc: %s\n", IDC_NAME)
+	fmt.Printf("idc: %s\n", config.IDC_NAME)
 	fmt.Printf("v0 size: %d byte\n", int(v0Size))
 	fmt.Printf("v1 size: %d byte\n", int(v1Size))
 	fmt.Printf("平均减少%fKB，降低%f%%\n", (v0Size-v1Size)/float64(KB), (v0Size-v1Size)/v0Size*100)
 }
 
 func perform() {
-	responses, err := ReadMessagesFromFile(RESPONSE_PATH)
+	responses, err := common.ReadMessagesFromFile(config.RESPONSE_PATH)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -92,20 +94,6 @@ func perform() {
 	fmt.Printf("==================================\n")
 	fmt.Printf(">=60k\n")
 	performExperiment(type4Responses)
-}
-
-func testField() {
-	responses, err := ReadMessagesFromFile(RESPONSE_PATH)
-	if err != nil {
-		log.Fatal(err)
-	}
-	if responses == nil {
-		log.Fatal("responses is nil")
-	}
-	var totalResponseCount = len(responses)
-	fmt.Printf("get %d responses int total\n", totalResponseCount)
-	fmt.Printf("=================================\n")
-
 }
 
 func main() {

@@ -1,5 +1,7 @@
 code.byted.org/tiktok/api_extend v0.0.0-20230831123722-3a2d9280bf90 h1:5tJndRGmpxTWpU4u2piCCT7hNsh4a1dHgCIIdVS0J/E=
 code.byted.org/tiktok/api_extend v0.0.0-20230831123722-3a2d9280bf90/go.mod h1:rQ1Dv7i7BtHzULDDLGHZ6lFyEGGQ8LYe8cigAas6PR8=
+code.byted.org/tiktok/pb_builder v1.0.53-0.20250711062746-90aff6a664fc h1:Uaz7vCPyP69OHILTUcv2jDoul8c3ZmA9u4rHKL45JrY=
+code.byted.org/tiktok/pb_builder v1.0.53-0.20250711062746-90aff6a664fc/go.mod h1:rAXYH5WMzWgCMqJaYuz94436aOas3d6cpmWfUbpoeX8=
 code.byted.org/tiktok/pb_builder v1.0.53-0.20250723080048-44948e686dcf h1:4nkXrEqh4UzvPt8u6SMMXpX3kLAOzFxyo63B8sMRIdA=
 code.byted.org/tiktok/pb_builder v1.0.53-0.20250723080048-44948e686dcf/go.mod h1:NBEFe3V4v/NoTv/I2iSCOzZ7CVJwTL54PpI7iVkbWFU=
 github.com/gogo/protobuf v1.3.2 h1:Ov1cvc58UF3b5XjBnZv7+opcTcQFZebYjWzi34vdm4Q=
